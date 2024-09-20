@@ -2,18 +2,36 @@ const express = require('express');
 
 const app = express();
 
-// app.get("/user",(req,res)=>{
-//     console.log(req.query);
-//     res.send({firstName: "Laksh", lastName: "Nijhawan"})
-// })
 
+//next() moves the get context to the next route handlers, since they don't have any res.send() statement
+// this goes on until the 5th request handler, and since we have no next() in it, and also a res.send(), it gets returned
 
-//DYNAMIC ROUTES
-app.get("/user/:userId/:name/:password",(req,res)=>{
-    console.log(req.params);
-    res.send({firstName: "Laksh", lastName: "Nijhawan"})
-})
-
+app.get("/user",
+    (req, res, next) =>{
+        console.log("Handling the route user!!")
+        next();
+    },
+    (req, res, next) =>{
+        console.log("Handling the route user2!!")
+        //res.send("2nd response")
+        next();
+    },
+    (req, res, next) =>{
+        console.log("Handling the route user3!!")
+        //res.send("3rd response")
+        next();
+    },
+    (req, res, next) =>{
+        console.log("Handling the route user4!!")
+        //res.send("4th response")
+        next();
+    },
+    (req, res) =>{
+        console.log("Handling the route user5!!")
+        res.send("5th response")
+    },
+    
+)
 
 
 app.listen(1000,()=>{
