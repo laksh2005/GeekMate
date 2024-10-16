@@ -4,14 +4,13 @@ const app = express();
 const User = require("./models/user");
 const userModel = require('./models/user');
 
-//we store the data in the database using post api request
+//this is a readymade middleware, which helps us read the JSON data from the end user, and converts it to JS
+app.use(express.json());
+
+//now the data is being taken fromt eh end user (postman)
 app.post("/signup",async (req,res)=>{
-    const user= new User({
-        firstName:"virat",
-        lastName: "kohli",
-        emailId: "virat18@gmail.com",
-        password: "virat@81",
-    });
+    const user= new User(req.body);
+    
     try{
         await user.save();
         res.send("User Added successfully")
