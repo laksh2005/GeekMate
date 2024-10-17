@@ -59,6 +59,45 @@ app.get("/feed",async (req,res)=>{
     }
 })
 
+//this DELETE api will help us DELETE the documents from the db by userId
+app.delete("/user",async (req,res)=>{
+    const userId= req.body._id;
+
+    try{
+        const user = await User.findByIdAndDelete(userId);
+        res.send("user deleted");
+    } catch (err){
+        res.status(400).send("Something went wrong");
+    }
+})
+
+//this PATCH API will help us update the documents fromt the db by userId
+app.patch("/user/byId", async (req, res) => {
+    const userId = req.body.userId;
+    const data = req.body;
+
+    try {
+        await User.findByIdAndUpdate({ _id: userId }, data);
+        res.send("User data is updated");
+    } catch (err) {
+        res.status(400).send("Something went wrong");
+    }
+});
+
+
+//this PATCH API will help us update the documents fromt the db by emailId
+app.patch("/user/byEmail", async (req, res) => {
+    const userEmail = req.body.userEmail;
+    const data = req.body;
+
+    try {
+        await User.findOneAndUpdate({ emailId: userEmail }, data);
+        res.send("User data is updated");
+    } catch (err) {
+        res.status(400).send("Something went wrong");
+    }
+});
+
 connectDB()
     .then(()=>{
         console.log("Database connection established.");
