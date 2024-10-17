@@ -7,17 +7,56 @@ const userModel = require('./models/user');
 //this is a readymade middleware, which helps us read the JSON data from the end user, and converts it to JS
 app.use(express.json());
 
-//now the data is being taken fromt eh end user (postman)
-app.post("/signup",async (req,res)=>{
-    const user= new User(req.body);
+//this GET api will help us find documents from the dm, having the emailId which is entered from user end (postman)
+app.get("/user",async (req,res)=>{
     
-    try{
-        await user.save();
-        res.send("User Added successfully")
-    } catch (err){
-        res.status(400).send("error saving the user: " + err.message);
-    }
+    const userEmail= req.body.emailId;
 
+    try{
+        const users = await User.find({emailId: userEmail})
+        //or we can do const user = await User.findOne({emailId: userEmail})
+
+        if(users.length===0){
+            res.status(404).send("User not found");
+        }
+        else{
+            res.send(users);
+        }
+    } catch (err){
+        res.status(400).send("Something went wrong");
+    }
+})
+
+//this GET api will help us find documents from the dm, having the Id which is entered from user end (postman)
+app.get("/id",async (req,res)=>{
+    
+    const userId= req.body._id;
+
+    try{
+        const users = await User.findById({_id: userId})
+        //or we can do const user = await User.findOne({emailId: userEmail})
+
+        if(users.length===0){
+            res.status(404).send("User not found");
+        }
+        else{
+            res.send(users);
+        }
+    } catch (err){
+        res.status(400).send("Something went wrong");
+    }
+})
+
+//this GET api will help us find all the documents from the db
+app.get("/feed",async (req,res)=>{
+    const userEmail= new User(req.body.email);
+
+    try{
+        const users = await User.find({});
+        res.send(users);
+    } catch (err){
+        res.status(400).send("Something went wrong");
+    }
 })
 
 connectDB()
