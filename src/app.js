@@ -7,6 +7,17 @@ const userModel = require('./models/user');
 //this is a readymade middleware, which helps us read the JSON data from the end user, and converts it to JS
 app.use(express.json());
 
+//we store the data in the database using post api request
+app.post("/signup",async (req,res)=>{
+    const user= new User(req.body);
+    try{
+        await user.save();
+        res.send("User Added successfully")
+    } catch (err){
+        res.status(400).send("error saving the user: " + err.message);
+    }
+});
+
 //this GET api will help us find documents from the dm, having the emailId which is entered from user end (postman)
 app.get("/user",async (req,res)=>{
     
@@ -79,11 +90,11 @@ app.patch("/user/byId", async (req, res) => {
     try {
         await User.findByIdAndUpdate({ _id: userId }, data);
         res.send("User data is updated");
+        runValidators: true;
     } catch (err) {
         res.status(400).send("Something went wrong");
     }
 });
-
 
 //this PATCH API will help us update the documents fromt the db by emailId
 app.patch("/user/byEmail", async (req, res) => {
@@ -93,6 +104,7 @@ app.patch("/user/byEmail", async (req, res) => {
     try {
         await User.findOneAndUpdate({ emailId: userEmail }, data);
         res.send("User data is updated");
+        runValidators: true;
     } catch (err) {
         res.status(400).send("Something went wrong");
     }
