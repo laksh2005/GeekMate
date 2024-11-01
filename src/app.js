@@ -10,6 +10,8 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const { userAuth } = require("./middlewares/auth")
 
+
+
 //this is a readymade middleware, which helps us read the JSON data from the end user, and converts it to JS
 app.use(express.json());
 app.use(cookieParser());
@@ -51,12 +53,12 @@ app.post("/login",async (req,res)=>{
             throw new Error ("invalid credentials");
         }
         
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await user.validatePassword(password);
 
         if(isPasswordValid){
             //HERE WE WILL CREATE A JWT TOKEN
             //ONLY IF THE PASSWORD ID VALID AND THE LOGIN HAPPENS
-            const token = await jwt.sign({_id: user._id}, "Thisis+key+forthistoken123");
+            const token = await user.getJWT();
 
             //Adding the token to cookie and then sending a response back to the user
             res.cookie("token", token);

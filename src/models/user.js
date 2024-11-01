@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const validator = require("validator");
 
 //THIS IS A USER SCHEMA, USERMODEL
 const userSchema = mongoose.Schema({
@@ -51,6 +54,19 @@ const userSchema = mongoose.Schema({
     }
 );
 
-const userModel = mongoose.model("User", userSchema);
+userSchema.methods.getJWT = async function(){
+    const user = this;
+    // "this" refers to the particular instance of the userSchema which we login
+    const token = await jwt.sign({_id: user._id}, "Thisis+key+forthistoken123", {expiresIn:"7d"});
+    return token;
+}
 
+userSchema.methods.validatePassword = async function(passwordInputByUser){
+    const user = this;
+    const passwordHash = user.password;
+    const isPasswordValid = await bcrypt.compare(passwordInputByUser, passwordHash);
+    return isPasswordValid;
+}
+
+const userModel = mongoose.model("User", userSchema);
 module.exports = userModel;
