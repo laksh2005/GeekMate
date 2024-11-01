@@ -8,6 +8,7 @@ const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth")
 
 //this is a readymade middleware, which helps us read the JSON data from the end user, and converts it to JS
 app.use(express.json());
@@ -69,24 +70,21 @@ app.post("/login",async (req,res)=>{
     }
 })
 
-app.get("/profile", async (req,res)=>{
+app.get("/profile", userAuth, async (req,res)=>{
     try{
-        const cookies = req.cookies;
-        const { token } = cookies;
-
-        if(!token){
-            throw new Error("Invalid Token");
-        }
-    
-        const decodedMessage = await jwt.verify(token, "Thisis+key+forthistoken123");
-        const { _id } = decodedMessage;
-        const user = await User.findById(_id);
-
-        if(!user){
-            throw new Error("USER DOES NOT EXIST");
-        }
-
+        const user = req.user;
         res.send(user);
+    } catch(err){
+        res.status(400).send("Error :" + err.message);
+    }
+})
+
+app.post("/sendConnectionRequest", userAuth, async (req,res)=>{
+    try{
+        const user = req.user;
+        //sending a connection request
+        console.log("sending a connection request...");
+        res.send(user.firstName + " sent a connection request!")
     } catch(err){
         res.status(400).send("Error :" + err.message);
     }
