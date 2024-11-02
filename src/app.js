@@ -84,50 +84,6 @@ app.delete("/user",async (req,res)=>{
     }
 })
 
-//this PATCH API will help us update the documents fromt the db by userId
-app.patch("/user/:userId", async (req, res) => {
-    const userId = req.params?.userId;
-    const data = req.body;
-
-    try {
-        const ALLOWED_UPDATES = ["password", "gender", "age", "skills", "about"];
-        const isUpdateAllowed = Object.keys(data).every((k) =>
-            ALLOWED_UPDATES.includes(k)
-        );
-
-        if (!isUpdateAllowed) {
-            throw new Error("Update not allowed");
-        }
-
-        if (data.skills && data.skills.length > 10) {
-            throw new Error("Skills cannot be more than 10");
-        }
-
-        const updatedUser = await User.findByIdAndUpdate(userId, data, {
-            returnDocument: "after",
-            runValidators: true,
-        });
-
-        res.send("User data is updated");
-
-    } catch (err) {
-        res.status(400).send(err.message);
-    }
-});
-
-//this PATCH API will help us update the documents fromt the db by emailId
-// app.patch("/user/byEmail", async (req, res) => {
-//     const userEmail = req.body.userEmail;
-//     const data = req.body;
-
-//     try {
-//         await User.findOneAndUpdate({ emailId: userEmail }, data);
-//         res.send("User data is updated");
-//         runValidators: true;
-//     } catch (err) {
-//         res.status(400).send("Something went wrong");
-//     }
-// });
 
 connectDB()
     .then(()=>{
