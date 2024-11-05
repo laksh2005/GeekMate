@@ -33,12 +33,11 @@ const userSchema = mongoose.Schema({
         min:18,
         max:60,
     },
-    gender:{
+    gender: {
         type: String,
-        validate(value){
-            if(!["male","female","other"]){
-                throw new Error ("Gender data isn't valid");
-            }
+        enum: {
+            values: ["male", "female", "other"],
+            message: `{VALUE} is not a valid gender type`,
         }
     },
     about:{
@@ -54,10 +53,13 @@ const userSchema = mongoose.Schema({
     }
 );
 
+//this is COMPUND INDEXING : it will help when there are various users with the same firstName, it would be easy to find the exact desired user in searching
+userSchema.index({firstName: 1});
+
 userSchema.methods.getJWT = async function(){
     const user = this;
     // "this" refers to the particular instance of the userSchema which we login
-    const token = await jwt.sign({_id: user._id}, "Thisis+key+forthistoken123", {expiresIn:"7d"});
+    const token = await jwt.sign({_id: user._id},   "Thisis+key+forthistoken123", {expiresIn:"7d"});
     return token;
 }
 
