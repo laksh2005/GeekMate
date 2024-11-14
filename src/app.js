@@ -9,11 +9,13 @@ const { ReturnDocument } = require('mongodb');
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
+const userRouter = require("./routes/user");
 
 //WE WILL USE THE ROUTES AS MIDDLEWARES
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
+app.use("/", userRouter);
 
 //this is a readymade middleware, which helps us read the JSON data from the end user, and converts it to JS
 app.use(express.json());
