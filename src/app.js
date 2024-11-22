@@ -5,11 +5,20 @@ const cookieParser = require("cookie-parser");
 const User = require("./models/user");
 const userModel = require('./models/user');
 const { ReturnDocument } = require('mongodb');
+const cors = require("cors");
 
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+
+//here we are connecting the /login api in express with login button in frontend
+app.use(
+    cors({
+        origin: "http://localhost:3000",
+        credentials: true,
+    })
+);
 
 //WE WILL USE THE ROUTES AS MIDDLEWARES
 app.use("/", authRouter);
