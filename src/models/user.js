@@ -47,6 +47,11 @@ const userSchema = mongoose.Schema({
     skills:{
         type: [String],
     },
+    photoURL: {
+        type: String,
+        trim: true,
+        default: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp", 
+    },
     },
     {
         timestamps: true,

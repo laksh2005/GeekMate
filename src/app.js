@@ -13,22 +13,32 @@ const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
 
 //here we are connecting the /login api in express with login button in frontend
-app.use(
-    cors({
-        origin: "http://localhost:3000",
-        credentials: true,
-    })
-);
+app.use(cors({
+    origin: "http://localhost:3000", 
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.options('*', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.sendStatus(200);
+});
+
+
+
+//this is a readymade middleware, which helps us read the JSON data from the end user, and converts it to JS
+app.use(express.json());
+app.use(cookieParser());
 
 //WE WILL USE THE ROUTES AS MIDDLEWARES
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
-
-//this is a readymade middleware, which helps us read the JSON data from the end user, and converts it to JS
-app.use(express.json());
-app.use(cookieParser());
 
 
 //this GET api will help us find documents from the dm, having the emailId which is entered from user end (postman)

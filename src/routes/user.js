@@ -4,7 +4,7 @@ const { userAuth } = require("../middlewares/auth")
 const  ConnectionRequest = require("../models/connectionRequest")
 const mongoose = require("mongoose")
 const User = require("../models/user")
-const USER_SAFE_DATA = "firstName lastName age gender skills";
+const USER_SAFE_DATA = "firstName lastName age gender skills photoURL about";
 
 //API to get all the pending connection request for the loggedIn user
 userRouter.get("/user/requests/recieved", userAuth, async (req,res)=>{
@@ -15,7 +15,7 @@ userRouter.get("/user/requests/recieved", userAuth, async (req,res)=>{
         const connectionRequests = await ConnectionRequest.find({
             toUserID: new mongoose.Types.ObjectId(loggedInUser._id),
             status: "interested"
-        }).populate("fromUserID", ["firstName", "lastName", "age", "gender", "skills"]);
+        }).populate("fromUserID", USER_SAFE_DATA);
         
 
         res.json({
@@ -101,7 +101,7 @@ userRouter.get("/feed", userAuth, async (req,res)=>{
                 {_id: {$nin: Array.from(hiddenUsersFromFeed)}},
                 {_id: {$ne: loggedInUser._id}},
             ],
-        }).select(USER_SAFE_DATA)
+        }).select("firstName lastName age gender skills about photoURL")
           .skip(skip)
           .limit(limit)
 
